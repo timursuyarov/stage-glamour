@@ -105,6 +105,7 @@ export function ChangeRateDialog({ open, onOpenChange, rates }: Props) {
               onChange={handleBankChange}
               className="w-full"
               placeholder={t("bank")}
+              getPopupContainer={(node) => node.parentElement ?? document.body}
             />
           </div>
           <div className="space-y-1.5">

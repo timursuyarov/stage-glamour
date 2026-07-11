@@ -253,6 +253,7 @@ export function ProcessedFileDialog({
           value={text || undefined}
           options={paymentFor}
           className="w-[160px]"
+          getPopupContainer={(node) => node.parentElement ?? document.body}
           onChange={(val) => handleDocTypeChange(index, val)}
           disabled={record.u_IsPaymentMade === "Yes"}
         />
@@ -282,6 +283,7 @@ export function ProcessedFileDialog({
               options={options}
               disabled={!record.u_DocType || record.u_IsPaymentMade === "Yes"}
               className="w-[250px]"
+              getPopupContainer={(node) => node.parentElement ?? document.body}
               onChange={(val, option) =>
                 handleBpChange(
                   index,

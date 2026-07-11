@@ -57,6 +57,10 @@ export function BpAutoComplete({
         disabled={disabled}
         placeholder={placeholder}
         className={className}
+        // Render the dropdown inside its container so it works inside a
+        // (modal) Radix Dialog, which otherwise blocks pointer events on
+        // body-level portals.
+        getPopupContainer={(node) => node.parentElement ?? document.body}
         onChange={(val) => {
           setSearchDebounced(val);
           onChange?.(val);

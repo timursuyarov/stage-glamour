@@ -186,6 +186,7 @@ export function ConversionDialog({ open, onOpenChange, mode, row }: Props) {
               value={docType || undefined}
               className="w-full"
               placeholder={t("paymentFor")}
+              getPopupContainer={(node) => node.parentElement ?? document.body}
               onChange={(v) => {
                 setDocType(v);
                 setBpName("");
@@ -233,6 +234,7 @@ export function ConversionDialog({ open, onOpenChange, mode, row }: Props) {
               value={currency || undefined}
               className="w-full"
               placeholder={t("convertationCurrency")}
+              getPopupContainer={(node) => node.parentElement ?? document.body}
               onChange={setCurrency}
               options={[
                 { value: "USD", label: "USD" },
