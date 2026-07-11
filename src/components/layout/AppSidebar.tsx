@@ -25,6 +25,7 @@ import {
   BarChart3,
   Gift,
   Printer,
+  Landmark,
   ChevronLeft,
   ChevronDown,
   Sparkles,
@@ -115,6 +116,7 @@ const navigationGroups: NavGroup[] = [
       // { id: 'reports', labelKey: 'nav.reports', icon: BarChart3, href: '/reports' },
       { id: 'bonuses', labelKey: 'nav.bonuses', icon: Gift, href: '/bonuses' },
       { id: 'labelPrint', labelKey: 'nav.labelPrint', icon: Printer, href: '/label-print' },
+      { id: 'bankStatements', labelKey: 'nav.bankStatements', icon: Landmark, href: '/bank-statements' },
     ],
   },
 ];

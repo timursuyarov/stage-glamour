@@ -105,7 +105,7 @@ const permissions: Record<UserRole, Record<string, string[]>> = {
 export const menuVisibility: Record<UserRole, string[]> = {
   admin: [
     'admission', 'relocation', 'requiredStockTransfer', 'collect', 'validation',
-    'moveToRegion', 'return', 'history', 'employees', 'cells', 'goods', 'inventory', 'inventoryCountings', 'bonuses', 'labelPrint',
+    'moveToRegion', 'return', 'history', 'employees', 'cells', 'goods', 'inventory', 'inventoryCountings', 'bonuses', 'labelPrint', 'bankStatements',
   ],
   validator: ['validation', 'history', 'cells', 'goods'],
   returner: ['return'],

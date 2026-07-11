@@ -41,6 +41,8 @@ import MoveToRegionHistoryPage from "./pages/MoveToRegionHistoryPage";
 import BonusesPage from "./pages/BonusesPage";
 import LabelPrintPage from "./pages/LabelPrintPage";
 import LabelPrintPopup from "./pages/LabelPrintPopup";
+import BankStatementsPage from "./pages/BankStatementsPage";
+import BankStatementDetailPage from "./pages/BankStatementDetailPage";
 import NotFound from "./pages/NotFound";
 
 import PublicRoute from "./components/layout/PublicRoute";
@@ -108,6 +110,8 @@ const App = () => (
                       <Route path="/reports" element={<ReportsPage />} />
                       <Route path="/bonuses" element={<BonusesPage />} />
                       <Route path="/label-print" element={<LabelPrintPage />} />
+                      <Route path="/bank-statements" element={<BankStatementsPage />} />
+                      <Route path="/bank-statements/:id" element={<BankStatementDetailPage />} />
                     </Route>
                   </Route>
 
