@@ -77,11 +77,12 @@ export default function ConversionsPage() {
         toast.success(t("successfullyDeleted"));
         setRowToDelete(null);
       },
-      onError: (err: unknown) =>
+      onError: (err: unknown) => {
         toast.error(
           (err as { response?: { data?: { message?: string } } })?.response
             ?.data?.message ?? t("common.error"),
-        ),
+        );
+      },
     });
   };
 
