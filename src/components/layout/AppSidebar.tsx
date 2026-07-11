@@ -26,6 +26,12 @@ import {
   Gift,
   Printer,
   Landmark,
+  LayoutDashboard,
+  Upload,
+  FileCheck,
+  ArrowLeftRight,
+  Repeat,
+  Lightbulb,
   ChevronLeft,
   ChevronDown,
   Sparkles,
@@ -116,7 +122,19 @@ const navigationGroups: NavGroup[] = [
       // { id: 'reports', labelKey: 'nav.reports', icon: BarChart3, href: '/reports' },
       { id: 'bonuses', labelKey: 'nav.bonuses', icon: Gift, href: '/bonuses' },
       { id: 'labelPrint', labelKey: 'nav.labelPrint', icon: Printer, href: '/label-print' },
+    ],
+  },
+  // Accountant section — only visible to the `bugalter` role (see menuVisibility).
+  {
+    id: 'accounting',
+    items: [
+      { id: 'accountantDashboard', labelKey: 'nav.accountantDashboard', icon: LayoutDashboard, href: '/accountant/dashboard' },
       { id: 'bankStatements', labelKey: 'nav.bankStatements', icon: Landmark, href: '/bank-statements' },
+      { id: 'loadedPayments', labelKey: 'nav.loadedPayments', icon: Upload, href: '/loaded-payments' },
+      { id: 'actSverka', labelKey: 'nav.actSverka', icon: FileCheck, href: '/act-sverka' },
+      { id: 'conversions', labelKey: 'nav.conversions', icon: ArrowLeftRight, href: '/conversions' },
+      { id: 'conversionsUploaded', labelKey: 'nav.conversionsUploaded', icon: Repeat, href: '/conversions/uploaded' },
+      { id: 'recommendations', labelKey: 'nav.recommendations', icon: Lightbulb, href: '/recommendations' },
     ],
   },
 ];

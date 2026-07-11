@@ -69,6 +69,8 @@ export interface BusinessPartner {
   cardCode: string;
   /** "A" account / "C" customer / "S" supplier. */
   cardType: string;
+  /** BP currency — used by the conversion modals. */
+  currency?: string;
 }
 
 /** Row shape sent to PATCH /bank-statements/bank-statements-for-sap. */
@@ -262,3 +264,49 @@ export const useUploadToSap = () => {
       }),
   });
 };
+
+// ─── Recommendations (infinite scroll; skip = row offset) ────────────────────
+export const RECOMMENDATIONS_PAGE_SIZE = 20;
+
+export interface RecommendationRow {
+  u_DocType: string;
+  u_AcctCode: string;
+  u_AcctName: string;
+  u_BPCode: string;
+  u_BPName: string;
+  u_Keyword: string;
+  u_BPCurrency: string;
+  docNum: number;
+}
+
+export interface RecommendationsFilters {
+  /** cardCode of the selected BP/account */
+  bpCode?: string;
+  /** "" | "A" | "C" | "S" */
+  docType?: string;
+}
+
+const fetchRecommendations = async (
+  f: RecommendationsFilters,
+  skip: number,
+): Promise<RecommendationRow[]> => {
+  const { data } = await request.get<unknown>(
+    `/bank-statements/recommendations?bpCode=${encodeURIComponent(
+      f.bpCode ?? "",
+    )}&docType=${f.docType ?? ""}&skip=${skip}&pageSize=${RECOMMENDATIONS_PAGE_SIZE}`,
+  );
+  return toArray<RecommendationRow>(data);
+};
+
+export const useRecommendationsInfinite = (f: RecommendationsFilters) =>
+  useInfiniteQuery(
+    ["bankstatements", "recommendations", f],
+    ({ pageParam = 0 }) => fetchRecommendations(f, pageParam),
+    {
+      getNextPageParam: (lastPage, allPages) =>
+        lastPage.length >= RECOMMENDATIONS_PAGE_SIZE
+          ? allPages.length * RECOMMENDATIONS_PAGE_SIZE
+          : undefined,
+      refetchOnWindowFocus: false,
+    },
+  );

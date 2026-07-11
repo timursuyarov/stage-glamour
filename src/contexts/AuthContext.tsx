@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { getStoredToken, getStoredEmployee, type LoginEmployee } from '@/lib/authStorage';
 
-/** Backend sends jobTitle: "Admin" | "Tekshiruvchi" | "Qaytaruvchi" */
-export type UserRole = 'admin' | 'validator' | 'returner';
+/** Backend sends jobTitle: "Admin" | "Tekshiruvchi" | "Qaytaruvchi" | "Bugalter" */
+export type UserRole = 'admin' | 'validator' | 'returner' | 'bugalter';
 
 export interface User {
   id: string;
@@ -17,6 +17,7 @@ export function jobTitleToRole(jobTitle: string): UserRole {
   if (t === 'admin') return 'admin';
   if (t === 'tekshiruvchi') return 'validator';
   if (t === 'qaytaruvchi') return 'returner';
+  if (t === 'bugalter' || t === 'buxgalter') return 'bugalter';
   return 'admin';
 }
 
@@ -99,16 +100,38 @@ const permissions: Record<UserRole, Record<string, string[]>> = {
     inventory: [],
     reports: [],
   },
+  bugalter: {
+    admission: [],
+    order: [],
+    collect: [],
+    validation: [],
+    return: [],
+    masterData: [],
+    move: [],
+    relocation: [],
+    history: [],
+    warehouse: [],
+    employees: [],
+    cells: [],
+    goods: [],
+    inventory: [],
+    reports: [],
+  },
 };
 
 // Menu visibility: Admin = everything; Tekshiruvchi = validation; Qaytaruvchi = return (parent + children)
 export const menuVisibility: Record<UserRole, string[]> = {
   admin: [
     'admission', 'relocation', 'requiredStockTransfer', 'collect', 'validation',
-    'moveToRegion', 'return', 'history', 'employees', 'cells', 'goods', 'inventory', 'inventoryCountings', 'bonuses', 'labelPrint', 'bankStatements',
+    'moveToRegion', 'return', 'history', 'employees', 'cells', 'goods', 'inventory', 'inventoryCountings', 'bonuses', 'labelPrint',
   ],
   validator: ['validation', 'history', 'cells', 'goods'],
   returner: ['return'],
+  // Accountant-only: these pages are visible to and reachable by bugalter only.
+  bugalter: [
+    'accountantDashboard', 'bankStatements', 'loadedPayments', 'actSverka',
+    'conversions', 'conversionsUploaded', 'recommendations',
+  ],
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
