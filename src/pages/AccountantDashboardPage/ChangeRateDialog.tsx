@@ -36,10 +36,10 @@ export function ChangeRateDialog({ open, onOpenChange, rates }: Props) {
   const [usd, setUsd] = useState("");
   const [rub, setRub] = useState("");
 
-  // Banks whose description mentions "SAP" are internal and excluded.
+  // Banks whose name mentions "SAP" are internal (the SAP rate) and excluded.
   const bankOptions = banks
-    .filter((b) => !b.descr?.includes("SAP"))
-    .map((b) => ({ value: b.fldValue, label: b.descr }));
+    .filter((b) => !b.name?.includes("SAP") && !b.value?.includes("SAP"))
+    .map((b) => ({ value: b.value, label: b.name }));
 
   const handleBankChange = (val: string) => {
     setBank(val);

@@ -21,8 +21,8 @@ export interface ExchangeRateRow {
 }
 
 export interface BankOption {
-  fldValue: string;
-  descr: string;
+  value: string;
+  name: string;
 }
 
 export interface UpdateExchangeRateBody {
