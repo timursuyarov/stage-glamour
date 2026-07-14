@@ -291,6 +291,7 @@ export default function PicklistsPage({
 
   const handleConfirmScan = () => {
     if (!pendingScan || !picklistDetail) return;
+    if (validationScan.isLoading) return;
     validationScan.mutate(
       { docEntry: picklistDetail.id, barcode: pendingScan.barcode },
       {
@@ -308,6 +309,32 @@ export default function PicklistsPage({
     // Re-focus scanner input so worker can scan the next item immediately
     setTimeout(() => barcodeInputRef.current?.focus(), 100);
   };
+
+  // Keep the latest confirm handler without re-binding the Enter listener.
+  const confirmScanRef = useRef(handleConfirmScan);
+  useEffect(() => {
+    confirmScanRef.current = handleConfirmScan;
+  });
+
+  // Enter confirms the pending scan, same as clicking the validate button.
+  // Bound on the capture phase so a bare Enter can be told apart from the Enter
+  // a scanner appends to a barcode: at capture time the hidden input still holds
+  // the scanned code, before the wedge handler reads and clears it.
+  useEffect(() => {
+    if (!isValidationMode || !pendingScan) return;
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" || e.repeat) return;
+      const target = e.target as HTMLElement | null;
+      if (target instanceof HTMLInputElement && target.value) return;
+      if (target?.closest(".ant-select")) return;
+      e.preventDefault();
+      confirmScanRef.current();
+    };
+
+    document.addEventListener("keydown", handleKey, true);
+    return () => document.removeEventListener("keydown", handleKey, true);
+  }, [isValidationMode, pendingScan]);
 
   const isAssigning = isValidationMode
     ? assignValidationValidator.isLoading
