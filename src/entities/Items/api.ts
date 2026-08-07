@@ -84,6 +84,7 @@ const fetchItems = async (
   filters?: ItemsFilters
 ): Promise<{ items: Good[]; total?: number }> => {
   const params = new URLSearchParams();
+  params.set("WarehouseCode", "tosh_s");
   if (filters?.ItemCode) params.set("ItemCode", filters.ItemCode);
   if (filters?.ItemCodes) params.set("ItemCodes", filters.ItemCodes);
   if (filters?.ItemName) params.set("ItemName", filters.ItemName);
