@@ -65,6 +65,9 @@ const fetchInventoryTransferRequests = async (
   // Status is always 2 for this page unless explicitly overridden
   params.set("Status", String(filters?.Status ?? 2));
 
+  // Always scope to the tosh_s warehouse
+  params.set("WarehouseCode", "tosh_s");
+
   if (filters?.DocEntry != null) params.set("DocEntry", String(filters.DocEntry));
   if (filters?.DocNum != null) params.set("DocNum", String(filters.DocNum));
   if (filters?.CardName) params.set("CardName", filters.CardName);
