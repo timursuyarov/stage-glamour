@@ -181,6 +181,73 @@ function BinLocationSelect({
   );
 }
 
+// ─── Box-count splitting ─────────────────────────────────────────────────────
+// When an item's quantity is not an exact multiple of its box size
+// (quantityPerPackage), split it into two rows:
+//   • full-box row  → floor(qty / box) * box   (clean division)
+//   • leftover row  → qty % box                 (remainder, picked to P/N zones)
+// Leftover rows are marked so they can be grouped at the bottom of the table.
+function expandItemForBoxCount(item: AdmissionItem): AdmissionItem[] {
+  const box = item.quantityPerPackage ?? 0;
+  const total = item.remainingOpenQuantity ?? item.quantity;
+
+  // No split when there's no box size, quantity fits in whole boxes, or qty < one box.
+  if (!box || box <= 0 || total <= box || total % box === 0) {
+    return [
+      {
+        ...item,
+        // Preselect the recommended (N-zone UDF) bin for the single/full row.
+        cellLocation:
+          item.cellLocation ||
+          (item.recommendedBinAbsEntry != null
+            ? String(item.recommendedBinAbsEntry)
+            : ""),
+      },
+    ];
+  }
+
+  const fullQty = Math.floor(total / box) * box;
+  const leftoverQty = total - fullQty;
+
+  const fullRow: AdmissionItem = {
+    ...item,
+    id: `${item.id}-full`,
+    quantity: fullQty,
+    remainingOpenQuantity: fullQty,
+    actualQty: fullQty,
+    isLeftover: false,
+    // Full-box row goes to the recommended N-zone bin.
+    cellLocation:
+      item.cellLocation ||
+      (item.recommendedBinAbsEntry != null
+        ? String(item.recommendedBinAbsEntry)
+        : ""),
+    status: "received",
+  };
+
+  const leftoverRow: AdmissionItem = {
+    ...item,
+    id: `${item.id}-leftover`,
+    quantity: leftoverQty,
+    remainingOpenQuantity: leftoverQty,
+    actualQty: leftoverQty,
+    isLeftover: true,
+    // Leftover picked to P/N zones (enforced by backend) — no recommended preselect.
+    cellLocation: "",
+    status: "received",
+  };
+
+  return [fullRow, leftoverRow];
+}
+
+// Expand a whole item list and move every leftover row to the bottom.
+function expandItemsForBoxCount(items: AdmissionItem[]): AdmissionItem[] {
+  const expanded = items.flatMap(expandItemForBoxCount);
+  const regular = expanded.filter((i) => !i.isLeftover);
+  const leftovers = expanded.filter((i) => i.isLeftover);
+  return [...regular, ...leftovers];
+}
+
 // ─── Admission draft persistence (localStorage, keyed by docNum) ─────────────
 interface AdmissionDraftData {
   items: Array<{ id: string; actualQty: number; expiryDate: string; cellLocation: string }>;
@@ -329,10 +396,14 @@ const AdmissionPage = () => {
     const empId = admission.assignedEmployeeId ?? null;
     setAssignedEmployeeId(empId);
 
+    // Split non-box-divisible quantities into full + leftover rows first,
+    // then merge any saved draft overrides onto the expanded rows (matched by
+    // the expanded row id, e.g. "42-3-full" / "42-3-leftover").
+    const expandedItems = expandItemsForBoxCount(admission.items);
+
     const draft = loadDraft(admission.documentNumber);
     if (draft) {
-      // Merge saved overrides into live item list
-      const mergedItems = admission.items.map((item) => {
+      const mergedItems = expandedItems.map((item) => {
         const d = draft.items.find((di) => di.id === item.id);
         if (!d) return item;
         const maxQty = item.remainingOpenQuantity ?? item.quantity;
@@ -348,7 +419,7 @@ const AdmissionPage = () => {
       setEditedItems(mergedItems);
       setPendingEmployeeId(draft.pendingEmployeeId ?? empId);
     } else {
-      setEditedItems([...admission.items]);
+      setEditedItems(expandedItems);
       setPendingEmployeeId(empId);
     }
   };
@@ -362,11 +433,12 @@ const AdmissionPage = () => {
     setPendingEmployeeId(null);
   };
 
-  // Display items (edited or original)
+  // Display items (edited or original). Fall back to the expanded original
+  // list so box-count splitting is reflected even before any edit.
   const displayItems = selectedAdmission
     ? editedItems.length
       ? editedItems
-      : selectedAdmission.items
+      : expandItemsForBoxCount(selectedAdmission.items)
     : [];
 
   // Required fields per item: actualQty > 0 and <= quantity (from GET), expiry, manufacturing, admission dates, cell
@@ -867,13 +939,21 @@ const AdmissionPage = () => {
                           className={cn(
                             "border-t border-border",
                             item.status === "mismatch" &&
-                              "bg-status-warning-bg/30"
+                              "bg-status-warning-bg/30",
+                            item.isLeftover && "bg-primary/5"
                           )}
                         >
                           <td className="px-3 py-3 border-r border-border w-44">
-                            <p className="font-medium text-xs truncate max-w-[160px]" title={item.name || "—"}>
-                              {item.name || "—"}
-                            </p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-medium text-xs truncate max-w-[130px]" title={item.name || "—"}>
+                                {item.name || "—"}
+                              </p>
+                              {item.isLeftover && (
+                                <span className="shrink-0 inline-flex items-center rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                                  {t("admission.leftover")}
+                                </span>
+                              )}
+                            </div>
                             {item.itemCode && (
                               <p className="font-mono text-[11px] text-muted-foreground mt-0.5">
                                 {item.itemCode}
@@ -889,7 +969,9 @@ const AdmissionPage = () => {
                             {item.quantity}
                           </td>
                           <td className="px-3 py-3 text-center border-r border-border tabular-nums">
-                            {item.quantityPerPackage != null && item.quantityPerPackage > 0
+                            {item.isLeftover
+                              ? "—"
+                              : item.quantityPerPackage != null && item.quantityPerPackage > 0
                               ? Number((item.quantity / item.quantityPerPackage).toFixed(1))
                               : "—"}
                           </td>
@@ -928,6 +1010,16 @@ const AdmissionPage = () => {
                               onChange={(val) => handleCellChange(item.id, val)}
                               hasError={cellInvalid}
                             />
+                            {!item.isLeftover && item.recommendedBinCode && (
+                              <p className="mt-1 text-[10px] text-muted-foreground truncate">
+                                {t("admission.recommendedBin", { bin: item.recommendedBinCode })}
+                              </p>
+                            )}
+                            {item.isLeftover && (
+                              <p className="mt-1 text-[10px] text-primary/80 truncate">
+                                {t("admission.leftoverZoneHint")}
+                              </p>
+                            )}
                           </td>
                           <td className="px-3 py-3 text-center border-r border-border last:border-r-0">
                             {itemStatusIcon[item.status]}

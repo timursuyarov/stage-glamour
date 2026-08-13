@@ -40,6 +40,12 @@ export interface AdmissionItem {
   cellLocation?: string;
   barcode: string;
   status: 'pending' | 'received' | 'mismatch';
+  /** True for the leftover (remainder) row produced by splitting a non-box-divisible quantity. */
+  isLeftover?: boolean;
+  /** Recommended bin (N-zone UDF) absEntry; backend may populate later. Used to preselect the full-box row's cell. */
+  recommendedBinAbsEntry?: number | null;
+  /** Human-readable code for the recommended bin, shown as a hint. */
+  recommendedBinCode?: string | null;
 }
 
 export interface SAPSyncInfo {

@@ -16,6 +16,9 @@ export interface PurchaseInvoiceDocumentLine {
   measureUnit: string | null;
   quantityPerPackage?: number | null;
   smartupCode?: string | null;
+  /** Recommended bin resolved from the item's N-zone UDF (U_Nzona). */
+  recommendedBinAbsEntry?: number | null;
+  recommendedBinCode?: string | null;
 }
 
 export interface PurchaseInvoiceItem {
@@ -76,6 +79,8 @@ function mapDocumentLineToAdmissionItem(
     lineNum: line.lineNum,
     warehouseCode: line.warehouseCode ?? undefined,
     quantityPerPackage: line.quantityPerPackage ?? undefined,
+    recommendedBinAbsEntry: line.recommendedBinAbsEntry ?? null,
+    recommendedBinCode: line.recommendedBinCode ?? null,
     barcode: "",
     status: "pending",
   };
