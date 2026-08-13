@@ -26,7 +26,7 @@ import { EWarehouseCheckingType } from "@/enums/warehouseChecking";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Loader2, ChevronLeft, ChevronRight, X, Printer } from "lucide-react";
+import { Eye, EyeOff, Loader2, ChevronLeft, ChevronRight, X, Printer, Search } from "lucide-react";
 import { useLabelPrint } from "@/features/label-print/hooks/useLabelPrint";
 import { DEFAULT_LABEL_DATA } from "@/features/label-print/types/label";
 import { message } from "antd";
@@ -108,6 +108,7 @@ export default function PicklistsPage({
   const { user } = useAuth();
   const { print: printLabelPopup } = useLabelPrint();
   const [pageIndex, setPageIndex] = useState(0);
+  const [searchInput, setSearchInput] = useState<string>("");
   const [selectedDocEntry, setSelectedDocEntry] = useState<number | null>(null);
   const [deliveryPackageCount, setDeliveryPackageCount] = useState<number>(0);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
@@ -181,18 +182,40 @@ export default function PicklistsPage({
   const rangeStart = pageIndex * PAGE_SIZE + 1;
   const rangeEnd = pageIndex * PAGE_SIZE + picklists.length;
 
-  // Global scanner: scanning "pick-<id>" while the list is shown opens that row.
-  const handlePickScan = (raw: string) => {
-    const match = /^pick-(\d+)$/i.exec(raw);
-    if (!match) return;
-    const id = Number(match[1]);
-    if (picklists.some((p) => p.id === id)) {
-      setSelectedDocEntry(id);
-    } else {
-      message.warning(t("picklist.scanNotFound"));
-    }
+  // Extract the order id from a scanned QR ("pick-<id>") or a plain numeric id.
+  // Returns null when the value is neither.
+  const parseOrderId = (raw: string): number | null => {
+    const value = raw.trim();
+    const match = /^pick-(\d+)$/i.exec(value);
+    if (match) return Number(match[1]);
+    if (/^\d+$/.test(value)) return Number(value);
+    return null;
   };
-  useScannerInput({
+
+  // Global scanner: scanning "pick-<id>" while the list is shown opens that order.
+  const handlePickScan = (raw: string) => {
+    const id = parseOrderId(raw);
+    if (id == null) return;
+    // Open by id directly — the detail is fetched by id, so the order need not
+    // be on the currently visible page.
+    setSelectedDocEntry(id);
+  };
+
+  // Visible search box: search an order by its scanned QR code or plain id.
+  const handleSearchSubmit = () => {
+    const id = parseOrderId(searchInput);
+    if (id == null) {
+      message.warning(t("picklist.searchInvalidCode"));
+      return;
+    }
+    setSelectedDocEntry(id);
+    setSearchInput("");
+  };
+  // Global list scanner. When a serial scanner is connected, scans arrive here
+  // via the device subscription with NO dependence on input focus, so the user
+  // never has to click into the search box first. serialActive tells the UI a
+  // scanner is live so we can hint that and keep the manual box out of the way.
+  const { serialActive: listScannerActive } = useScannerInput({
     mode: "global",
     enabled: selectedDocEntry == null,
     onScan: handlePickScan,
@@ -623,6 +646,39 @@ export default function PicklistsPage({
       )}
 
       <ModuleCard>
+        <div className="flex items-center gap-2 px-4 pt-4 pb-2">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSearchSubmit();
+                }
+              }}
+              placeholder={t("picklist.searchByScanPlaceholder")}
+              className="pl-8 h-9"
+            />
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            className="gap-1"
+            onClick={handleSearchSubmit}
+            disabled={!searchInput.trim()}
+          >
+            <Search className="w-4 h-4" />
+            {t("common.searchAction")}
+          </Button>
+          {listScannerActive && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-status-success">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              {t("picklist.scannerActiveHint")}
+            </span>
+          )}
+        </div>
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
