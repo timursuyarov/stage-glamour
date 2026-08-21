@@ -122,7 +122,7 @@ const permissions: Record<UserRole, Record<string, string[]>> = {
 // Menu visibility: Admin = everything; Tekshiruvchi = validation; Qaytaruvchi = return (parent + children)
 export const menuVisibility: Record<UserRole, string[]> = {
   admin: [
-    'admission', 'relocation', 'requiredStockTransfer', 'collect', 'validation',
+    'admission', 'relocation', 'requiredStockTransfer', 'collect', 'picklists', 'validation',
     'moveToRegion', 'return', 'history', 'employees', 'cells', 'goods', 'inventory', 'inventoryCountings', 'bonuses', 'labelPrint',
     // Destructive maintenance screen — admin only.
     'localData',

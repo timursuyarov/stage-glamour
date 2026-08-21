@@ -12,6 +12,8 @@ import {
   type RequiredTransferLine,
   type RequiredTransfersFilters,
 } from "@/entities/RequiredTransfers/api";
+import { LOCAL_DATA_ENTITY_VALUES } from "@/entities/LocalData/api";
+import { LocalDataDeleteButton } from "@/components/ui/local-data-delete-button";
 import { EWarehouseCheckingType } from "@/enums/warehouseChecking";
 import { useEmployees } from "@/entities/Employees/api";
 import { useScannerInput } from "@/hooks/useScannerInput";
@@ -256,7 +258,7 @@ export default function RequiredTransfersPage() {
               <TableHead className="text-xs font-semibold uppercase">{t("requiredTransfers.assignedUser")}</TableHead>
               <TableHead className="text-xs font-semibold uppercase w-28">{t("requiredTransfers.completedPercentage")}</TableHead>
               <TableHead className="text-xs font-semibold uppercase">{t("common.createdAt")}</TableHead>
-              <TableHead className="text-xs font-semibold uppercase w-24">{t("common.actions")}</TableHead>
+              <TableHead className="text-xs font-semibold uppercase w-36">{t("common.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -297,15 +299,23 @@ export default function RequiredTransfersPage() {
                     {new Date(request.createdAt).toLocaleString()}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2 h-8"
-                      onClick={() => handleOpenModal(request)}
-                    >
-                      <Eye className="w-4 h-4" />
-                      {t("common.see")}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 h-8"
+                        onClick={() => handleOpenModal(request)}
+                      >
+                        <Eye className="w-4 h-4" />
+                        {t("common.see")}
+                      </Button>
+                      <LocalDataDeleteButton
+                        entity={LOCAL_DATA_ENTITY_VALUES.OrdersCheckingRequests}
+                        id={request.id}
+                        rowLabel={request.name}
+                        size="icon"
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

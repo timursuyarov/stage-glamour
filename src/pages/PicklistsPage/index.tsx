@@ -21,6 +21,8 @@ import {
 } from "@/entities/Picklists/api";
 import { useEmployees } from "@/entities/Employees/api";
 import { useRequiredTransfersByIds } from "@/entities/RequiredTransfers/api";
+import { LOCAL_DATA_ENTITY_VALUES } from "@/entities/LocalData/api";
+import { LocalDataDeleteButton } from "@/components/ui/local-data-delete-button";
 import { EPickListStatus, EPickListLineStatus } from "@/enums/picklist";
 import { EWarehouseCheckingType } from "@/enums/warehouseChecking";
 import { Button } from "@/components/ui/button";
@@ -483,19 +485,27 @@ export default function PicklistsPage({
     {
       title: t("common_actions"),
       key: "actions",
-      width: 100,
+      width: 150,
       fixed: "right",
       render: (_: unknown, record: PicklistItem) => (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="gap-1"
-          onClick={() => handleViewDetail(record.id)}
-        >
-          <Eye className="w-4 h-4" />
-          {t("common_view")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="gap-1"
+            onClick={() => handleViewDetail(record.id)}
+          >
+            <Eye className="w-4 h-4" />
+            {t("common_view")}
+          </Button>
+          <LocalDataDeleteButton
+            entity={LOCAL_DATA_ENTITY_VALUES.PickLists}
+            id={record.id}
+            rowLabel={record.salesOrderDocNum || `#${record.id}`}
+            size="icon"
+          />
+        </div>
       ),
     },
   ];

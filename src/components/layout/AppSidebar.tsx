@@ -82,6 +82,7 @@ const navigationGroups: NavGroup[] = [
       { id: 'relocation', labelKey: 'nav.relocation', icon:  PackageSearch, href: '/relocation' },
       { id: 'requiredStockTransfer', labelKey: 'nav.requiredStockTransfer', icon:ArrowRightLeft, href: '/required-transfers' },
       { id: 'collect', labelKey: 'nav.collect', icon:  PackageCheck, href: '/collect' },
+      { id: 'picklists', labelKey: 'nav.picklists', icon: ClipboardList, href: '/picklists' },
       { id: 'validation', labelKey: 'nav.validation', icon: ClipboardCheck, href: '/validation' },
       {
         id: 'moveToRegion',

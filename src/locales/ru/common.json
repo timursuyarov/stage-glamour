@@ -28,6 +28,7 @@
   "nav.reports": "Отчёты",
   "nav.bonuses": "Бонусы",
   "nav.labelPrint": "Печать этикеток",
+  "nav.picklists": "Листы подбора",
   "nav.localData": "Очистка данных",
   "common.search": "Поиск...",
   "common.searchAction": "Поиск",
@@ -644,5 +645,8 @@
   "localData.entityTransferRequirements": "Требования на перемещение",
   "localData.entityReturnCheckingRequestLines": "Строки проверки возвратов",
   "localData.entityInventoryRequestGroups": "Группы инвентаризации",
-  "localData.entityBonusRecords": "Бонусные записи"
+  "localData.entityBonusRecords": "Бонусные записи",
+  "localData.deleteRow": "Удалить запись",
+  "localData.deleteRowTitle": "Удалить запись?",
+  "localData.deleteRowBody": "Запись {{row}} будет безвозвратно удалена из базы Glamour. Документы SAP не затрагиваются."
 }

@@ -149,6 +149,12 @@ export const useDeleteLocalData = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["local-data-entities"] });
       queryClient.invalidateQueries({ queryKey: ["local-data-preview"] });
+      // Also refresh the feature lists these rows are shown on, so a row
+      // deleted from a page disappears without a manual reload.
+      queryClient.invalidateQueries({ queryKey: ["required-transfers"] });
+      queryClient.invalidateQueries({ queryKey: ["picklists"] });
+      queryClient.invalidateQueries({ queryKey: ["bonus-records-grouped"] });
+      queryClient.invalidateQueries({ queryKey: ["bonus-records-detail"] });
     },
   });
 };

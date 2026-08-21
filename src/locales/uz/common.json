@@ -28,6 +28,7 @@
   "nav.reports": "Hisobotlar",
   "nav.bonuses": "Bonuslar",
   "nav.labelPrint": "Yorliq chop etish",
+  "nav.picklists": "Yig'ish varaqalari",
   "nav.localData": "Ma'lumotlarni tozalash",
   "common.search": "Qidirish...",
   "common.searchAction": "Qidirish",
@@ -644,5 +645,8 @@
   "localData.entityTransferRequirements": "Ko'chirish talablari",
   "localData.entityReturnCheckingRequestLines": "Qaytarish tekshiruv qatorlari",
   "localData.entityInventoryRequestGroups": "Inventarizatsiya guruhlari",
-  "localData.entityBonusRecords": "Bonus yozuvlari"
+  "localData.entityBonusRecords": "Bonus yozuvlari",
+  "localData.deleteRow": "Yozuvni o'chirish",
+  "localData.deleteRowTitle": "Yozuv o'chirilsinmi?",
+  "localData.deleteRowBody": "{{row}} yozuvi Glamour bazasidan butunlay o'chiriladi. SAP hujjatlariga ta'sir qilmaydi."
 }

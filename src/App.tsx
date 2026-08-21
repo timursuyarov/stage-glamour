@@ -51,6 +51,7 @@ import ActSverkaDetailPage from "./pages/ActSverkaDetailPage";
 import ConversionsPage from "./pages/ConversionsPage";
 import ConversionsUploadedPage from "./pages/ConversionsUploadedPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
+import PicklistsPage from "./pages/PicklistsPage";
 import LocalDataPage from "./pages/LocalDataPage";
 import NotFound from "./pages/NotFound";
 
@@ -119,6 +120,7 @@ const App = () => (
                       <Route path="/reports" element={<ReportsPage />} />
                       <Route path="/bonuses" element={<BonusesPage />} />
                       <Route path="/label-print" element={<LabelPrintPage />} />
+                      <Route path="/picklists" element={<PicklistsPage />} />
                       <Route path="/local-data" element={<LocalDataPage />} />
 
                       {/* Accountant section — bugalter role only */}
