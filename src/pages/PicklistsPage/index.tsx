@@ -223,18 +223,12 @@ export default function PicklistsPage({
     onScan: handlePickScan,
   });
 
-  // In-modal validation scan: match a line by barcode, then confirm.
-  const handleScanCode = (value: string) => {
+  // Stage a line in the header detail panel, awaiting confirmation. Shared by
+  // the scanner and the per-row validate button so both routes behave the same:
+  // the line's name and quantities appear in the header, and nothing is sent to
+  // the API until the user confirms.
+  const stageLineForValidation = (line: PicklistLine) => {
     if (!isValidationMode || !picklistDetail) return;
-    // A line's barcode field may hold several barcodes joined by "|"
-    // (e.g. "{Barcode1}|{Barcode2}"), or just one — match against any token.
-    const line = currentLines.find((l) =>
-      (l.barcode ?? "").split("|").some((b) => b.trim() === value)
-    );
-    if (!line) {
-      message.warning(t("validation.barcodeNotFound"));
-      return;
-    }
     if (line.status === EPickListLineStatus.Validated) {
       message.warning(t("validation.alreadyValidated"));
       return;
@@ -247,6 +241,21 @@ export default function PicklistsPage({
     // Send the line's full barcode value to the API (may be "A|B|C"),
     // not just the single scanned token.
     setPendingScan({ line, barcode: (line.barcode ?? "").trim() });
+  };
+
+  // In-modal validation scan: match a line by barcode, then confirm.
+  const handleScanCode = (value: string) => {
+    if (!isValidationMode || !picklistDetail) return;
+    // A line's barcode field may hold several barcodes joined by "|"
+    // (e.g. "{Barcode1}|{Barcode2}"), or just one — match against any token.
+    const line = currentLines.find((l) =>
+      (l.barcode ?? "").split("|").some((b) => b.trim() === value)
+    );
+    if (!line) {
+      message.warning(t("validation.barcodeNotFound"));
+      return;
+    }
+    stageLineForValidation(line);
   };
   const { inputRef: barcodeInputRef, onKeyDown: handleBarcodeKeyDown } = useScannerInput({
     mode: "input",
@@ -614,23 +623,9 @@ export default function PicklistsPage({
             size="sm"
             variant="outline"
             className="h-8"
-            onClick={() => {
-              if (!picklistDetail) return;
-              validationScan.mutate(
-                {
-                  docEntry: picklistDetail.id,
-                  barcode: (line.barcode ?? "").trim(),
-                },
-                {
-                  onSuccess: () => {
-                    message.success(t("common.success"));
-                  },
-                  onError: () => {
-                    message.error(t("error.somethingWentWrong"));
-                  },
-                }
-              );
-            }}
+            // Stage the line in the header detail panel instead of validating
+            // straight away, so clicking behaves exactly like scanning it.
+            onClick={() => stageLineForValidation(line)}
             disabled={disabled}
           >
             {validationScan.isLoading ? (
