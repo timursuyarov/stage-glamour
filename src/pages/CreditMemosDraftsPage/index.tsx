@@ -832,8 +832,8 @@ export default function CreditMemosDraftsPage() {
                           className={cn(baseRowClasses, rowHighlight)}
                         >
                           <TableCell className="font-mono text-sm">{idx + 1}</TableCell>
-                          <TableCell className="max-w-[240px]">
-                            <div className="font-medium truncate" title={line.itemDescription}>
+                          <TableCell className="min-w-[280px]">
+                            <div className="font-medium break-words" title={line.itemDescription}>
                               {line.itemDescription}
                             </div>
                             <div className="text-xs text-muted-foreground">{line.itemCode}</div>
@@ -966,8 +966,8 @@ export default function CreditMemosDraftsPage() {
                           )}
                         >
                           <TableCell className="font-mono text-sm">{idx + 1}</TableCell>
-                          <TableCell className="max-w-[240px]">
-                            <div className="font-medium truncate" title={line.itemDescription}>
+                          <TableCell className="min-w-[280px]">
+                            <div className="font-medium break-words" title={line.itemDescription}>
                               {line.itemDescription}
                             </div>
                             <div className="text-xs text-muted-foreground">{line.itemCode}</div>

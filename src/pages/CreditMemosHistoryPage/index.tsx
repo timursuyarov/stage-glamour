@@ -211,7 +211,7 @@ export default function CreditMemosHistoryPage() {
                     items.map((doc) => (
                       <TableRow key={doc.docEntry} className="hover:bg-muted/50">
                         <TableCell className="font-mono text-sm">{doc.docNum}</TableCell>
-                        <TableCell className="max-w-[200px] truncate" title={doc.cardName}>
+                        <TableCell className="min-w-[220px] break-words" title={doc.cardName}>
                           {doc.cardName}
                         </TableCell>
                         <TableCell className="font-mono text-sm">{doc.cardCode}</TableCell>
@@ -311,8 +311,8 @@ export default function CreditMemosHistoryPage() {
                     lines.map((line: CreditMemoLine, idx: number) => (
                       <TableRow key={idx}>
                         <TableCell className="font-mono text-sm">{idx + 1}</TableCell>
-                        <TableCell className="max-w-[240px]" title={line.itemDescription}>
-                          <p className="truncate">{line.itemDescription}</p>
+                        <TableCell className="min-w-[280px]" title={line.itemDescription}>
+                          <p className="break-words">{line.itemDescription}</p>
                           {line.itemCode && (
                             <p className="font-mono text-xs text-muted-foreground mt-0.5">#{line.itemCode}</p>
                           )}
