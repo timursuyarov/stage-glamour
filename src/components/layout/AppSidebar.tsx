@@ -32,6 +32,7 @@ import {
   ArrowLeftRight,
   Repeat,
   Lightbulb,
+  DatabaseZap,
   ChevronLeft,
   ChevronDown,
   Sparkles,
@@ -122,6 +123,7 @@ const navigationGroups: NavGroup[] = [
       // { id: 'reports', labelKey: 'nav.reports', icon: BarChart3, href: '/reports' },
       { id: 'bonuses', labelKey: 'nav.bonuses', icon: Gift, href: '/bonuses' },
       { id: 'labelPrint', labelKey: 'nav.labelPrint', icon: Printer, href: '/label-print' },
+      { id: 'localData', labelKey: 'nav.localData', icon: DatabaseZap, href: '/local-data' },
     ],
   },
   // Accountant section — only visible to the `bugalter` role (see menuVisibility).

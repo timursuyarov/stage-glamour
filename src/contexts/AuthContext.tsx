@@ -124,6 +124,8 @@ export const menuVisibility: Record<UserRole, string[]> = {
   admin: [
     'admission', 'relocation', 'requiredStockTransfer', 'collect', 'validation',
     'moveToRegion', 'return', 'history', 'employees', 'cells', 'goods', 'inventory', 'inventoryCountings', 'bonuses', 'labelPrint',
+    // Destructive maintenance screen — admin only.
+    'localData',
   ],
   validator: ['validation', 'history', 'cells', 'goods'],
   returner: ['return'],
